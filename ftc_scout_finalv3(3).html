@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FTC Decode Scout — Team 10696</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Nunito:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root {
+  --coral: #ff5252;
+  --coral-dark: #e03c3c;
+  --coral-glow: rgba(255,82,82,.18);
+  --green: #23d160;
+  --green-dark: #18a045;
+  --amber: #ffaa00;
+  --amber-dark: #cc8800;
+  --blue: #3b9eff;
+  --blue-dark: #1a7fe8;
+  --red: #ff3860;
+  --red-dark: #cc2244;
+  --bg: #09090f;
+  --surface: #111119;
+  --surface2: #17171f;
+  --surface3: #1e1e28;
+  --surface4: #252530;
+  --border: #252535;
+  --border2: #2e2e45;
+  --text: #ededf8;
+  --text-dim: #7a7a9a;
+  --text-muted: #3a3a55;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --tab-h: 58px;
+  --display: 'Orbitron', sans-serif;
+  --body: 'Nunito', sans-serif;
+  --mono: 'Fira Code', monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--body);background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;-webkit-tap-highlight-color:transparent;}
+
+/* ─── HEADER ─── */
+header{
+  background:linear-gradient(135deg,#0d0d1a 0%,#14141f 100%);
+  border-bottom:2px solid var(--coral);
+  padding:10px 14px;
+  display:flex;align-items:center;gap:8px;
+  position:sticky;top:0;z-index:200;
+  box-shadow:0 4px 20px rgba(255,82,82,.12);
+}
+.logo{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.logo-icon{
+  width:36px;height:36px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--coral) 0%,#ff8a52 100%);
+  border-radius:8px;display:grid;place-items:center;
+  font-family:var(--display);font-weight:700;font-size:9px;color:#fff;
+  box-shadow:0 2px 10px rgba(255,82,82,.4);
+}
+.logo-text h1{font-family:var(--display);font-size:13px;font-weight:800;letter-spacing:.04em;line-height:1.1;}
+.logo-text span{font-family:var(--mono);font-size:9px;color:var(--text-dim);}
+
+.header-actions{display:flex;align-items:center;gap:6px;}
+
+/* Matches dropdown button */
+.matches-trigger{
+  display:flex;align-items:center;gap:5px;
+  background:var(--surface3);border:1px solid var(--border2);
+  color:var(--text-dim);font-family:var(--body);font-size:12px;font-weight:700;
+  padding:6px 10px;border-radius:8px;cursor:pointer;transition:all .2s;
+  position:relative;white-space:nowrap;
+}
+.matches-trigger:hover{border-color:var(--coral);color:var(--coral);}
+.matches-trigger.open{border-color:var(--coral);color:var(--coral);background:var(--coral-glow);}
+.match-badge{
+  background:var(--coral);color:#fff;border-radius:10px;
+  font-size:10px;font-weight:800;padding:1px 6px;min-width:18px;text-align:center;
+}
+
+.hdr-pts{
+  font-family:var(--display);font-size:48px;font-weight:900;
+  color:var(--coral);text-align:right;line-height:1;flex-shrink:0;
+}
+.hdr-pts small{display:block;font-family:var(--mono);font-size:11px;color:var(--text-dim);font-weight:400;margin-top:3px;}
+
+/* ─── MATCHES DROPDOWN PANEL ─── */
+.matches-panel{
+  position:fixed;top:62px;left:0;right:0;z-index:190;
+  background:var(--surface);border-bottom:1px solid var(--border2);
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+  max-height:60vh;overflow-y:auto;
+  transform:translateY(-8px);opacity:0;pointer-events:none;
+  transition:transform .22s cubic-bezier(.16,1,.3,1),opacity .22s;
+}
+.matches-panel.open{transform:translateY(0);opacity:1;pointer-events:all;}
+.matches-panel-head{
+  padding:10px 14px;font-family:var(--mono);font-size:10px;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.1em;border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--surface2);
+}
+.matches-panel-head button{
+  font-size:10px;font-family:var(--body);background:none;border:1px solid var(--border2);
+  color:var(--text-dim);padding:3px 8px;border-radius:5px;cursor:pointer;
+}
+.matches-panel-head button:hover{color:var(--red);border-color:var(--red);}
+.match-drop-item{
+  padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;
+  transition:background .15s;display:flex;align-items:center;gap:10px;
+}
+.match-drop-item:hover{background:var(--surface2);}
+.match-drop-info{flex:1;min-width:0;}
+.match-drop-team{font-weight:800;font-size:13px;}
+.match-drop-meta{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px;}
+.match-drop-pts{font-family:var(--display);font-size:16px;font-weight:900;color:var(--coral);}
+.match-drop-actions{display:flex;gap:5px;}
+.drop-act-btn{
+  font-size:10px;padding:4px 8px;border-radius:5px;border:1px solid var(--border2);
+  background:var(--surface3);color:var(--text-dim);cursor:pointer;font-family:var(--body);font-weight:700;
+}
+.drop-act-btn:hover{border-color:var(--coral);color:var(--coral);}
+.drop-act-btn.del:hover{border-color:var(--red);color:var(--red);}
+.matches-empty{padding:20px 14px;text-align:center;color:var(--text-muted);font-size:13px;}
+
+/* ─── SETUP BAR ─── */
+.setup-bar{
+  background:var(--surface2);padding:10px 14px;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+  border-bottom:1px solid var(--border);
+}
+.field-wrap label{display:block;font-family:var(--mono);font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:3px;}
+.field-wrap input,.field-wrap select{
+  width:100%;background:var(--surface3);border:1px solid var(--border2);
+  border-radius:7px;color:var(--text);font-family:var(--body);font-size:13px;
+  padding:7px 9px;outline:none;transition:border-color .2s;
+}
+.field-wrap input:focus,.field-wrap select:focus{border-color:var(--coral);}
+.field-wrap select option{background:var(--surface2);}
+
+.pos-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);
+}
+.pos-row label{font-family:var(--mono);font-size:9px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px;}
+.check-group{display:flex;gap:6px;flex-wrap:wrap;}
+.chip-check{display:none;}
+.chip-label{
+  padding:5px 11px;border-radius:20px;border:1px solid var(--border2);
+  font-size:11px;font-weight:700;cursor:pointer;transition:all .18s;
+  user-select:none;background:var(--surface3);color:var(--text-dim);
+}
+.chip-check:checked+.chip-label{background:var(--coral);border-color:var(--coral);color:#fff;}
+
+/* ─── TABS ─── */
+.tab-bar{
+  display:flex;background:var(--surface);border-bottom:1px solid var(--border);
+  overflow-x:auto;scrollbar-width:none;position:sticky;top:62px;z-index:100;
+}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{
+  flex:1;min-width:60px;height:var(--tab-h);border:none;background:transparent;
+  color:var(--text-muted);font-family:var(--body);font-size:11px;font-weight:700;
+  cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:0 4px;white-space:nowrap;
+}
+.tab-btn .tab-ico{font-size:16px;}
+.tab-btn.active{color:var(--coral);border-bottom-color:var(--coral);}
+.tab-btn:hover:not(.active){color:var(--text-dim);background:var(--surface2);}
+
+/* ─── PANELS ─── */
+main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.panels{flex:1;display:flex;flex-direction:column;}
+.panel{display:none;padding:14px;flex-direction:column;gap:12px;animation:fadeIn .2s;flex:1;}
+.panel.active{display:flex;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ─── CARDS ─── */
+.card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.card.accent-green{border-left:3px solid var(--green);}
+.card.accent-amber{border-left:3px solid var(--amber);}
+.card.accent-blue{border-left:3px solid var(--blue);}
+.card.accent-red{border-left:3px solid var(--red);}
+.card.accent-coral{border-left:3px solid var(--coral);}
+.card-head{
+  padding:9px 13px;font-family:var(--mono);font-size:9px;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.12em;border-bottom:1px solid var(--border);
+  background:var(--surface2);display:flex;align-items:center;justify-content:space-between;
+}
+.card-head .rule-ref{font-size:9px;color:var(--text-muted);font-style:italic;}
+.card-body{padding:12px;display:flex;flex-direction:column;gap:10px;}
+
+/* ─── INFO BOX ─── */
+.info-box{
+  background:rgba(59,158,255,.07);border:1px solid rgba(59,158,255,.2);
+  border-radius:var(--radius-sm);padding:10px 13px;font-size:12px;
+  color:var(--text-dim);line-height:1.6;
+}
+.info-box strong{color:var(--blue);}
+.info-box .rule-chip{
+  display:inline-block;background:rgba(59,158,255,.12);color:var(--blue);
+  font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:4px;margin-right:4px;
+}
+
+/* ─── TOGGLE ─── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;}
+.toggle-row label{font-size:14px;font-weight:600;cursor:pointer;flex:1;line-height:1.3;}
+.toggle-row .badge{font-family:var(--mono);font-size:11px;color:var(--green);margin:0 8px;font-weight:800;flex-shrink:0;}
+.toggle{
+  position:relative;width:46px;height:25px;-webkit-appearance:none;appearance:none;
+  background:var(--surface3);border-radius:13px;cursor:pointer;
+  border:1px solid var(--border2);transition:background .2s;flex-shrink:0;
+}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;width:17px;height:17px;
+  border-radius:50%;background:var(--text-dim);transition:transform .2s,background .2s;
+}
+.toggle:checked{background:var(--green);border-color:var(--green);}
+.toggle:checked::after{transform:translateX(21px);background:#fff;}
+
+/* ─── COUNTERS ─── */
+.counter-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 13px;border-top:1px solid var(--border);
+}
+.counter-row:first-child{border-top:none;}
+.counter-label{font-size:13px;font-weight:700;}
+.counter-label small{display:block;font-size:10px;color:var(--text-dim);font-weight:400;margin-top:2px;line-height:1.4;}
+.pts{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;margin-left:4px;}
+.pts.green{background:rgba(35,209,96,.14);color:var(--green);}
+.pts.amber{background:rgba(255,170,0,.14);color:var(--amber);}
+.pts.blue{background:rgba(59,158,255,.14);color:var(--blue);}
+.pts.red{background:rgba(255,56,96,.14);color:var(--red);}
+
+.cnt-strip{display:flex;border-radius:9px;overflow:hidden;border:1px solid var(--border2);}
+.cnt-btn{
+  width:38px;height:38px;border:none;background:var(--surface3);color:var(--text);
+  font-size:22px;line-height:1;cursor:pointer;transition:background .15s;
+  display:grid;place-items:center;user-select:none;font-family:var(--body);
+}
+.cnt-btn.plus{background:var(--coral);color:#fff;}
+.cnt-btn.plus:hover{background:var(--coral-dark);}
+.cnt-btn:not(.plus):hover{background:var(--surface2);}
+.cnt-val{
+  min-width:46px;height:38px;background:var(--surface2);
+  display:grid;place-items:center;font-family:var(--display);font-size:16px;font-weight:700;
+}
+.cnt-val.green{color:var(--green);}
+.cnt-val.amber{color:var(--amber);}
+.cnt-val.blue{color:var(--blue);}
+.cnt-val.red{color:var(--red);}
+.green-strip .cnt-btn.plus{background:var(--green);}
+.green-strip .cnt-btn.plus:hover{background:var(--green-dark);}
+.amber-strip .cnt-btn.plus{background:var(--amber);}
+.amber-strip .cnt-btn.plus:hover{background:var(--amber-dark);}
+.blue-strip .cnt-btn.plus{background:var(--blue);}
+.blue-strip .cnt-btn.plus:hover{background:var(--blue-dark);}
+.red-strip .cnt-btn.plus{background:var(--red);}
+.red-strip .cnt-btn.plus:hover{background:var(--red-dark);}
+
+/* ─── PARK OPTIONS ─── */
+.park-options{display:flex;flex-direction:column;gap:8px;}
+.park-opt input[type=radio]{display:none;}
+.park-opt label{
+  display:flex;align-items:center;gap:10px;padding:12px 13px;border-radius:9px;
+  border:1px solid var(--border2);background:var(--surface3);cursor:pointer;
+  font-size:13px;font-weight:600;transition:all .18s;
+}
+.park-opt label .dot{width:16px;height:16px;border-radius:50%;border:2px solid var(--border2);flex-shrink:0;transition:all .18s;}
+.park-opt input:checked+label{border-color:var(--coral);background:var(--coral-glow);}
+.park-opt input:checked+label .dot{border-color:var(--coral);background:var(--coral);}
+.park-opt label .pts-badge{margin-left:auto;font-family:var(--display);font-size:11px;font-weight:800;color:var(--coral);}
+
+/* ─── TEXTAREA ─── */
+textarea{
+  width:100%;background:var(--surface3);border:1px solid var(--border2);
+  border-radius:var(--radius-sm);color:var(--text);font-family:var(--body);font-size:13px;
+  padding:10px 12px;resize:vertical;min-height:80px;outline:none;transition:border-color .2s;line-height:1.5;
+}
+textarea:focus{border-color:var(--coral);}
+textarea::placeholder{color:var(--text-muted);}
+
+/* ─── HINTS ─── */
+.hint-list{display:flex;flex-wrap:wrap;gap:5px;}
+.hint{
+  padding:5px 10px;border:1px solid var(--border2);border-radius:20px;
+  font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;transition:all .15s;user-select:none;
+}
+.hint:hover{border-color:var(--coral);color:var(--coral);}
+
+/* ─── ALLIANCE GRID ─── */
+.alliance-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.alliance-field label{font-family:var(--mono);font-size:9px;color:var(--text-dim);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em;}
+.alliance-field input{
+  width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;
+  color:var(--text);font-family:var(--display);font-size:15px;padding:8px;
+  outline:none;transition:border-color .2s;text-align:center;font-weight:700;
+}
+.alliance-field input:focus{border-color:var(--coral);}
+
+/* ─── DATA SUMMARY ─── */
+.data-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 12px;border-radius:7px;background:var(--surface2);margin-bottom:3px;
+}
+.data-row .key{color:var(--text-dim);font-size:11px;font-family:var(--mono);}
+.data-row .val{font-weight:800;font-family:var(--mono);font-size:12px;}
+.data-row .val.coral{color:var(--coral);}
+.data-row .val.green{color:var(--green);}
+.data-row .val.amber{color:var(--amber);}
+.data-row .val.blue{color:var(--blue);}
+.data-row .val.red{color:var(--red);}
+.data-divider{height:1px;background:var(--border2);margin:6px 0;}
+
+/* ─── BUTTONS ─── */
+.save-btn{
+  width:100%;padding:15px;border:none;border-radius:var(--radius);
+  background:linear-gradient(135deg,var(--coral) 0%,#ff7058 100%);
+  color:#fff;font-family:var(--body);font-size:15px;font-weight:800;
+  cursor:pointer;transition:opacity .2s,transform .1s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 16px rgba(255,82,82,.3);
+}
+.save-btn:hover{opacity:.9;}
+.save-btn:active{transform:scale(.98);}
+.ghost-btn{
+  background:var(--surface3);border:1px solid var(--border2);
+  color:var(--text-dim);box-shadow:none;
+  background-image:none;
+}
+.ghost-btn:hover{background:var(--surface2);color:var(--text);}
+
+/* ─── EXPORT PANEL ─── */
+.export-panel{
+  background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);
+  overflow:hidden;
+}
+.export-panel-head{
+  padding:9px 13px;font-family:var(--mono);font-size:9px;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.12em;border-bottom:1px solid var(--border);
+  background:var(--surface2);
+}
+.export-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;}
+.export-btn{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  padding:12px 8px;border-radius:9px;border:1px solid var(--border2);background:var(--surface3);
+  cursor:pointer;transition:all .18s;font-family:var(--body);font-size:11px;font-weight:700;color:var(--text-dim);
+}
+.export-btn .exp-ico{font-size:22px;}
+.export-btn:hover{border-color:var(--coral);color:var(--coral);background:var(--coral-glow);}
+.export-btn.active{border-color:var(--coral);color:var(--coral);background:var(--coral-glow);}
+
+/* ─── SAVED MATCH CARDS ─── */
+.saved-match-card{
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;
+  transition:border-color .2s;
+}
+.saved-match-card:hover{border-color:var(--border2);}
+.smc-head{
+  background:var(--surface2);padding:9px 12px;
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+}
+.smc-team{font-weight:800;font-size:14px;flex:1;}
+.smc-match{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px;}
+.smc-pts{font-family:var(--display);font-size:18px;font-weight:900;color:var(--coral);}
+.smc-body{
+  padding:9px 12px;font-family:var(--mono);font-size:11px;color:var(--text-dim);
+  display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;
+}
+.smc-body .smc-note{grid-column:1/-1;color:var(--text);font-family:var(--body);font-size:12px;margin-top:2px;}
+.smc-footer{padding:6px 12px 9px;display:flex;gap:6px;flex-wrap:wrap;}
+.smc-btn{
+  font-size:10px;font-weight:700;font-family:var(--body);padding:5px 10px;
+  border-radius:6px;border:1px solid var(--border2);background:var(--surface3);
+  color:var(--text-dim);cursor:pointer;transition:all .15s;
+}
+.smc-btn:hover{border-color:var(--coral);color:var(--coral);}
+.smc-btn.danger:hover{border-color:var(--red);color:var(--red);}
+.smc-btn.primary{border-color:var(--coral);color:var(--coral);}
+
+/* ─── MODAL ─── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-box{
+  background:var(--surface);border-radius:20px 20px 0 0;width:100%;max-width:540px;
+  max-height:85vh;overflow-y:auto;
+  transform:translateY(30px);transition:transform .28s cubic-bezier(.16,1,.3,1);
+  border-top:2px solid var(--coral);
+}
+.modal-overlay.open .modal-box{transform:translateY(0);}
+.modal-head{
+  padding:14px 16px;font-family:var(--display);font-weight:800;font-size:14px;
+  border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;background:var(--surface);z-index:10;
+}
+.modal-close{
+  background:var(--surface3);border:1px solid var(--border2);border-radius:6px;
+  color:var(--text-dim);font-size:16px;padding:4px 10px;cursor:pointer;line-height:1;
+}
+.modal-close:hover{border-color:var(--coral);color:var(--coral);}
+.modal-body{padding:14px;display:flex;flex-direction:column;gap:10px;}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--green);color:#fff;padding:11px 22px;border-radius:30px;
+  font-weight:800;font-size:13px;transition:transform .3s ease;z-index:999;
+  white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,.4);font-family:var(--body);
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* ─── PRINT / EXPORT CARD ─── */
+#exportCard{
+  position:fixed;top:-9999px;left:0;width:480px;
+  background:#fff;color:#111;padding:24px;font-family:'Nunito',sans-serif;
+  border-radius:12px;
+}
+.ec-header{border-bottom:3px solid #ff5252;padding-bottom:12px;margin-bottom:16px;}
+.ec-title{font-size:20px;font-weight:900;color:#ff5252;}
+.ec-sub{font-size:11px;color:#888;font-family:'Fira Code',monospace;margin-top:2px;}
+.ec-row{
+  display:flex;justify-content:space-between;padding:6px 10px;
+  border-radius:5px;font-size:12px;margin-bottom:2px;
+}
+.ec-row:nth-child(odd){background:#f8f8f8;}
+.ec-key{color:#555;font-family:'Fira Code',monospace;}
+.ec-val{font-weight:800;font-family:'Fira Code',monospace;}
+.ec-val.coral{color:#ff5252;}
+.ec-val.green{color:#23d160;}
+.ec-val.amber{color:#ffaa00;}
+.ec-val.blue{color:#3b9eff;}
+.ec-val.red{color:#ff3860;}
+.ec-divider{height:1px;background:#eee;margin:8px 0;}
+.ec-section{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:#888;padding:8px 10px 4px;font-family:'Fira Code',monospace;}
+.ec-footer{margin-top:16px;padding-top:10px;border-top:1px solid #eee;font-size:10px;color:#aaa;}
+
+/* ─── PRINT STYLES ─── */
+@media print{
+  .tab-bar,.setup-bar,.pos-row,header,.export-panel,.save-btn,
+  .hint-list,.matches-trigger,.toast,#exportCard,
+  .smc-footer,.smc-btn{display:none!important;}
+  body{background:#fff!important;color:#111!important;}
+  .card{border:1px solid #ddd!important;box-shadow:none!important;}
+  .card-head{background:#f5f5f5!important;color:#666!important;}
+  .panel{display:flex!important;padding:12px!important;}
+  #tab-data{display:flex!important;}
+  .data-row{background:#f9f9f9!important;}
+  .data-row .key{color:#666!important;}
+}
+</style>
+</head>
+<body>
+
+<!-- ════ HEADER ════ -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">FTC</div>
+    <div class="logo-text">
+      <h1>Decode Scout</h1>
+      <span>#10696 · Syosset Syborgs</span>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="matches-trigger" id="matchesDropBtn" onclick="toggleMatchesPanel()">
+      📋 <span id="matchCount" class="match-badge">0</span>
+    </button>
+  </div>
+  <div class="hdr-pts">
+    <div id="hdr-pts">0</div>
+    <small>EST. PTS</small>
+  </div>
+</header>
+
+<!-- ════ MATCHES DROPDOWN PANEL ════ -->
+<div class="matches-panel" id="matchesPanel">
+  <div class="matches-panel-head">
+    <span>📋 Saved Matches</span>
+    <button onclick="clearAll()">🗑 Clear All</button>
+  </div>
+  <div id="matchesDropList"></div>
+</div>
+
+<!-- ════ SETUP BAR ════ -->
+<div class="setup-bar">
+  <div class="field-wrap">
+    <label>Team #</label>
+    <input type="number" id="teamNum" placeholder="e.g. 16312" oninput="updateTotal()">
+  </div>
+  <div class="field-wrap">
+    <label>Match #</label>
+    <input type="text" id="matchNum" placeholder="e.g. Q3, SF2" oninput="updateTotal()">
+  </div>
+  <div class="field-wrap">
+    <label>Alliance</label>
+    <select id="robotPos" onchange="updateTotal()">
+      <option value="Red 1">🔴 Red 1 – Near</option>
+      <option value="Red 2">🔴 Red 2 – Far</option>
+      <option value="Blue 1">🔵 Blue 1 – Near</option>
+      <option value="Blue 2">🔵 Blue 2 – Far</option>
+    </select>
+  </div>
+</div>
+
+<div class="pos-row">
+  <div>
+    <label>Starting Pos.</label>
+    <div class="check-group">
+      <input class="chip-check" type="radio" name="startPos" id="spNear" value="Near">
+      <label class="chip-label" for="spNear">Near</label>
+      <input class="chip-check" type="radio" name="startPos" id="spFar" value="Far">
+      <label class="chip-label" for="spFar">Far</label>
+    </div>
+  </div>
+  <div>
+    <label>Shoots From</label>
+    <div class="check-group">
+      <input class="chip-check" type="radio" name="shootFrom" id="sfNear" value="Near">
+      <label class="chip-label" for="sfNear">Near</label>
+      <input class="chip-check" type="radio" name="shootFrom" id="sfFar" value="Far">
+      <label class="chip-label" for="sfFar">Far</label>
+      <input class="chip-check" type="radio" name="shootFrom" id="sfBoth" value="Both">
+      <label class="chip-label" for="sfBoth">Both</label>
+    </div>
+  </div>
+</div>
+
+<!-- ════ TABS ════ -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="auto"><span class="tab-ico">⚙️</span>Auto</button>
+  <button class="tab-btn" data-tab="teleop"><span class="tab-ico">🕹️</span>TeleOp</button>
+  <button class="tab-btn" data-tab="endgame"><span class="tab-ico">🏁</span>End</button>
+  <button class="tab-btn" data-tab="fouls"><span class="tab-ico">⚠️</span>Fouls</button>
+  <button class="tab-btn" data-tab="alliance"><span class="tab-ico">📊</span>Alliance</button>
+  <button class="tab-btn" data-tab="data"><span class="tab-ico">📋</span>Data</button>
+</div>
+
+<main><div class="panels">
+
+<!-- ════════════════════════════════════════
+     AUTONOMOUS
+════════════════════════════════════════ -->
+<div class="panel active" id="tab-auto">
+  <div class="info-box">
+    <strong>AUTO — 30 seconds.</strong><br>
+    Robot must operate without driver input. Scouter records LEAVE at end of auto. For Pattern artifacts, read from the scoreboard <em>after</em> auto ends — the motif may not update live.
+  </div>
+
+  <div class="card accent-green">
+    <div class="card-head">
+      Leave Starting Line
+      <span class="rule-ref">§10.4.2 — LEAVE</span>
+    </div>
+    <div class="toggle-row">
+      <label for="leftLine">Robot no longer over the LAUNCH LINE at end of AUTO?</label>
+      <span class="badge">+3 pts</span>
+      <input type="checkbox" class="toggle" id="leftLine">
+    </div>
+  </div>
+
+  <div class="card accent-green">
+    <div class="card-head">
+      Autonomous Artifacts
+      <span class="rule-ref">§10.4.3</span>
+    </div>
+    <div style="padding:0;">
+      <div class="counter-row">
+        <div class="counter-label">
+          Classified <span class="pts green">+3 ea</span>
+          <small>Artifact transitions directly into RAMP via the SQUARE gate during AUTO</small>
+        </div>
+        <div class="cnt-strip green-strip">
+          <button class="cnt-btn" onclick="adjust('autoClassified',-1)">−</button>
+          <div class="cnt-val green" id="autoClassified-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('autoClassified',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-row">
+        <div class="counter-label">
+          Overflow <span class="pts amber">+1 ea</span>
+          <small>Artifact passes through the SQUARE but does NOT classify onto RAMP</small>
+        </div>
+        <div class="cnt-strip amber-strip">
+          <button class="cnt-btn" onclick="adjust('autoOverflow',-1)">−</button>
+          <div class="cnt-val amber" id="autoOverflow-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('autoOverflow',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-row">
+        <div class="counter-label">
+          Motif <span class="pts green">+2 ea</span>
+          <small>Artifacts forming the MOTIF pattern — read from scoreboard at end of AUTO</small>
+        </div>
+        <div class="cnt-strip green-strip">
+          <button class="cnt-btn" onclick="adjust('autoPattern',-1)">−</button>
+          <div class="cnt-val green" id="autoPattern-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('autoPattern',1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Auto Notes</div>
+    <div class="card-body">
+      <div class="hint-list">
+        <span class="hint" onclick="appendHint('autoNotes','Left line quickly')">⚡ Fast leave</span>
+        <span class="hint" onclick="appendHint('autoNotes','Did not leave line')">🚫 No leave</span>
+        <span class="hint" onclick="appendHint('autoNotes','Scored pre-loaded artifact')">🎯 Pre-load scored</span>
+        <span class="hint" onclick="appendHint('autoNotes','Ran into wall')">💥 Collision</span>
+        <span class="hint" onclick="appendHint('autoNotes','Broke down in auto')">💀 Broke down</span>
+      </div>
+      <textarea id="autoNotes" placeholder="Auto routine description, path taken, any issues…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     TELEOP
+════════════════════════════════════════ -->
+<div class="panel" id="tab-teleop">
+  <div class="info-box">
+    <strong>TELEOP — 2 minutes.</strong><br>
+    Count artifacts as they are scored. For Pattern artifacts, count yourself using the MOTIF <em>at the END of TELEOP</em> — scoreboard may lag behind live play.
+  </div>
+
+  <div class="card accent-green">
+    <div class="card-head">
+      TeleOp Artifacts
+      <span class="rule-ref">§10.5.2</span>
+    </div>
+    <div style="padding:0;">
+      <div class="counter-row">
+        <div class="counter-label">
+          Classified <span class="pts green">+3 ea</span>
+          <small>Artifact transitions directly into RAMP via the SQUARE gate</small>
+        </div>
+        <div class="cnt-strip green-strip">
+          <button class="cnt-btn" onclick="adjust('telClassified',-1)">−</button>
+          <div class="cnt-val green" id="telClassified-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('telClassified',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-row">
+        <div class="counter-label">
+          Overflow <span class="pts amber">+1 ea</span>
+          <small>Passes through SQUARE but does NOT transition to RAMP</small>
+        </div>
+        <div class="cnt-strip amber-strip">
+          <button class="cnt-btn" onclick="adjust('telOverflow',-1)">−</button>
+          <div class="cnt-val amber" id="telOverflow-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('telOverflow',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-row">
+        <div class="counter-label">
+          Depot <span class="pts blue">+1 ea</span>
+          <small>Artifact positioned over the DEPOT zone at end of TELEOP</small>
+        </div>
+        <div class="cnt-strip blue-strip">
+          <button class="cnt-btn" onclick="adjust('telDepot',-1)">−</button>
+          <div class="cnt-val blue" id="telDepot-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('telDepot',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-row">
+        <div class="counter-label">
+          Motif <span class="pts green">+2 ea</span>
+          <small>Forming the MOTIF — count yourself at end of TELEOP</small>
+        </div>
+        <div class="cnt-strip green-strip">
+          <button class="cnt-btn" onclick="adjust('telPattern',-1)">−</button>
+          <div class="cnt-val green" id="telPattern-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('telPattern',1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">TeleOp Notes</div>
+    <div class="card-body">
+      <div class="hint-list">
+        <span class="hint" onclick="appendHint('telNotes','Fast cycle speed')">⚡ Fast cycles</span>
+        <span class="hint" onclick="appendHint('telNotes','Primarily defending')">🛡️ Defender</span>
+        <span class="hint" onclick="appendHint('telNotes','Gate opened successfully')">🚪 Opened gate</span>
+        <span class="hint" onclick="appendHint('telNotes','Consistent scoring')">🎯 Consistent</span>
+        <span class="hint" onclick="appendHint('telNotes','Struggled to score')">😬 Struggled</span>
+        <span class="hint" onclick="appendHint('telNotes','Dropped many artifacts')">💧 Dropped</span>
+      </div>
+      <textarea id="telNotes" placeholder="Strategy, cycle speed, gate usage, scoring method…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ENDGAME
+════════════════════════════════════════ -->
+<div class="panel" id="tab-endgame">
+  <div class="info-box">
+    <strong>ENDGAME — last 20 sec of TELEOP.</strong><br>
+    Record parking status <em>after</em> the clock hits 0:00 and all robots stop moving. 
+    <span class="rule-chip">§10.5.3</span> A robot is "Fully Returned" only if its entire frame is supported solely by the BASE ZONE tile.
+  </div>
+
+  <div class="card accent-coral">
+    <div class="card-head">
+      BASE Return (Parking)
+      <span class="rule-ref">§10.5.3 — BASE RETURN</span>
+    </div>
+    <div class="card-body">
+      <div class="park-options">
+        <div class="park-opt">
+          <input type="radio" name="parking" id="parkNone" value="none" checked>
+          <label for="parkNone">
+            <span class="dot"></span>
+            No Return — not supported by BASE ZONE tile at match end
+            <span class="pts-badge">0 pts</span>
+          </label>
+        </div>
+        <div class="park-opt">
+          <input type="radio" name="parking" id="parkPartial" value="partial">
+          <label for="parkPartial">
+            <span class="dot"></span>
+            Partial Return — robot partially supported by BASE ZONE tile
+            <span class="pts-badge">+5 pts</span>
+          </label>
+        </div>
+        <div class="park-opt">
+          <input type="radio" name="parking" id="parkFull" value="full">
+          <label for="parkFull">
+            <span class="dot"></span>
+            Full Return — robot ONLY supported by BASE ZONE tile
+            <span class="pts-badge">+10 pts</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card accent-green">
+    <div class="card-head">
+      Alliance Bonus
+      <span class="rule-ref">§10.5.4 — 2-ROBOT BONUS</span>
+    </div>
+    <div class="toggle-row">
+      <label for="twoReturn">Both alliance robots fully returned to BASE ZONE?</label>
+      <span class="badge">+10 pts</span>
+      <input type="checkbox" class="toggle" id="twoReturn">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Endgame Observations</div>
+    <div class="card-body">
+      <div class="hint-list">
+        <span class="hint" onclick="appendHint('endgameNotes','Broke down in endgame')">💀 Broke down</span>
+        <span class="hint" onclick="appendHint('endgameNotes','Parts fell off')">🔩 Parts fell off</span>
+        <span class="hint" onclick="appendHint('endgameNotes','Mostly defending during endgame')">🛡️ Defending</span>
+        <span class="hint" onclick="appendHint('endgameNotes','Strong autonomous in endgame')">🤖 Strong auto</span>
+        <span class="hint" onclick="appendHint('endgameNotes','Helped alliance partner return')">🤝 Helped partner</span>
+      </div>
+      <textarea id="endgameNotes" placeholder="Robot status, parking timing, endgame strategy…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     FOULS
+════════════════════════════════════════ -->
+<div class="panel" id="tab-fouls">
+  <div class="info-box">
+    <strong>Fouls are awarded to the OPPONENT alliance.</strong><br>
+    <span class="rule-chip">Minor Foul</span> +5 pts to opponent (e.g., possessing &gt;3 artifacts, minor obstruction)<br>
+    <span class="rule-chip">Major Foul</span> +15 pts to opponent (e.g., clearing opponent's gate, G-Code violations)<br>
+    Track fouls <em>committed BY</em> the robot you are scouting.
+  </div>
+
+  <div class="card accent-red">
+    <div class="card-head">
+      Fouls by Scouted Robot
+      <span class="rule-ref">§11 — FOULS</span>
+    </div>
+    <div style="padding:0;">
+      <div class="counter-row">
+        <div class="counter-label">
+          Minor Fouls <span class="pts red">+5 opp ea</span>
+          <small>Possession &gt;3 artifacts · Minor field obstruction · Minor G-Code violation</small>
+        </div>
+        <div class="cnt-strip red-strip">
+          <button class="cnt-btn" onclick="adjust('minorFoul',-1)">−</button>
+          <div class="cnt-val red" id="minorFoul-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('minorFoul',1)">+</button>
+        </div>
+      </div>
+      <div class="counter-row">
+        <div class="counter-label">
+          Major Fouls <span class="pts red">+15 opp ea</span>
+          <small>Clearing opponent's gate · Egregious obstruction · Intentional rule violations</small>
+        </div>
+        <div class="cnt-strip red-strip">
+          <button class="cnt-btn" onclick="adjust('majorFoul',-1)">−</button>
+          <div class="cnt-val red" id="majorFoul-val">0</div>
+          <button class="cnt-btn plus" onclick="adjust('majorFoul',1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card accent-red">
+    <div class="card-head">
+      Cards Issued
+      <span class="rule-ref">§11.3 — CARDS</span>
+    </div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;">Yellow Card</div>
+          <label style="display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface3);cursor:pointer;">
+            <input type="checkbox" id="yellowCard" style="accent-color:gold;width:16px;height:16px;"> 🟨 Issued
+          </label>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:9px;color:var(--text-dim);margin-bottom:5px;text-transform:uppercase;letter-spacing:.08em;">Red Card</div>
+          <label style="display:flex;align-items:center;gap:8px;padding:11px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--surface3);cursor:pointer;">
+            <input type="checkbox" id="redCard" style="accent-color:red;width:16px;height:16px;"> 🟥 Issued
+          </label>
+        </div>
+      </div>
+      <div class="info-box" style="background:rgba(255,56,96,.06);border-color:rgba(255,56,96,.2);">
+        <strong style="color:var(--red);">Note:</strong> 2 Yellow Cards = Red Card. Red Card = DQ from current match + carry-forward Yellow Card.
+      </div>
+      <textarea id="foulNotes" placeholder="Describe the foul situation, rule cited, referee decision…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     ALLIANCE
+════════════════════════════════════════ -->
+<div class="panel" id="tab-alliance">
+  <div class="info-box">
+    <strong>Official Alliance Score — from scoreboard only.</strong><br>
+    Copy these values from the FTC Field Management System display after the match concludes. Leave blank if not yet available.
+  </div>
+  <div class="card accent-blue">
+    <div class="card-head">Alliance Score Breakdown — Official FMS</div>
+    <div class="card-body">
+      <div class="alliance-grid">
+        <div class="alliance-field"><label>Leave</label><input type="number" id="al-leave" placeholder="0" min="0" oninput="updateTotal()"></div>
+        <div class="alliance-field"><label>Artifact</label><input type="number" id="al-artifact" placeholder="0" min="0" oninput="updateTotal()"></div>
+        <div class="alliance-field"><label>Pattern</label><input type="number" id="al-pattern" placeholder="0" min="0" oninput="updateTotal()"></div>
+        <div class="alliance-field"><label>Base</label><input type="number" id="al-base" placeholder="0" min="0" oninput="updateTotal()"></div>
+        <div class="alliance-field"><label>Foul</label><input type="number" id="al-foul" placeholder="0" min="0" oninput="updateTotal()"></div>
+        <div class="alliance-field"><label>Total</label><input type="number" id="al-total" placeholder="0" min="0" oninput="updateTotal()"></div>
+      </div>
+    </div>
+  </div>
+  <button class="save-btn" onclick="saveMatch()">💾 Save This Match</button>
+</div>
+
+<!-- ════════════════════════════════════════
+     DATA
+════════════════════════════════════════ -->
+<div class="panel" id="tab-data">
+  <div class="card accent-coral" id="matchSummaryCard">
+    <div class="card-head">Current Match — Live Scoring Estimate</div>
+    <div class="card-body" id="dataSummary"></div>
+  </div>
+
+  <!-- Export panel -->
+  <div class="export-panel">
+    <div class="export-panel-head">📤 Export Current Match</div>
+    <div class="export-btns">
+      <button class="export-btn" onclick="exportPNG()">
+        <span class="exp-ico">🖼️</span>
+        <span>PNG Image</span>
+      </button>
+      <button class="export-btn" onclick="exportJPG()">
+        <span class="exp-ico">📷</span>
+        <span>JPG Image</span>
+      </button>
+      <button class="export-btn" onclick="exportPDF()">
+        <span class="exp-ico">📄</span>
+        <span>PDF / Print</span>
+      </button>
+      <button class="export-btn" onclick="exportMatchJSON()">
+        <span class="exp-ico">🗂️</span>
+        <span>JSON File</span>
+      </button>
+      <button class="export-btn" onclick="exportCurrentMatchCSV()" style="grid-column:1/-1;">
+        <span class="exp-ico">📊</span>
+        <span>CSV (Current Match)</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">All Saved Matches <span id="savedCount" style="color:var(--coral)"></span></div>
+    <div class="card-body" id="savedMatchesList">
+      <p style="color:var(--text-muted);font-size:13px;">No matches saved yet.</p>
+    </div>
+  </div>
+
+  <button class="save-btn ghost-btn" onclick="exportCSV()">⬇ Export All Matches as CSV</button>
+  <button class="save-btn ghost-btn" style="margin-top:-4px;" onclick="clearAll()">🗑 Clear All Saved Data</button>
+</div>
+
+</div></main>
+
+<!-- ════ EDIT MATCH MODAL ════ -->
+<div class="modal-overlay" id="editModal" onclick="closeEditModal(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span id="editModalTitle">Edit Match</span>
+      <button class="modal-close" onclick="closeEditModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="editModalBody"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="matchModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span id="modalTitle">Match Detail</span>
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Offscreen export card -->
+<div id="exportCard"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DECODE 2025-26 Official Scoring (Competition Manual)
+//  Reference: Table 10-2 and §10.4–10.5
+// ═══════════════════════════════════════════════════
+const PTS = {
+  leave: 3,           // §10.4.2 — LEAVE BONUS
+  autoClassified: 3,  // §10.4.3 — AUTO CLASSIFIED artifact on RAMP
+  autoOverflow: 1,    // §10.4.3 — AUTO OVERFLOW (passed SQUARE, not on RAMP)
+  autoPattern: 2,     // §10.4.3 — AUTO PATTERN artifact (forming MOTIF)
+  telClassified: 3,   // §10.5.2 — TELEOP CLASSIFIED artifact on RAMP
+  telOverflow: 1,     // §10.5.2 — TELEOP OVERFLOW
+  telDepot: 1,        // §10.5.2 — TELEOP DEPOT (artifact in DEPOT zone)
+  telPattern: 2,      // §10.5.2 — TELEOP PATTERN (forming MOTIF)
+  parkPartial: 5,     // §10.5.3 — PARTIAL RETURN (partial BASE ZONE support)
+  parkFull: 10,       // §10.5.3 — FULL RETURN (only BASE ZONE support)
+  twoReturn: 10,      // §10.5.4 — 2-ROBOT ALLIANCE BONUS (both fully returned)
+  minorFoul: 5,       // §11 — MINOR FOUL (awarded to OPPONENT)
+  majorFoul: 15,      // §11 — MAJOR FOUL (awarded to OPPONENT)
+};
+
+const state = {
+  autoClassified:0, autoOverflow:0, autoPattern:0,
+  telClassified:0,  telOverflow:0,  telDepot:0, telPattern:0,
+  minorFoul:0, majorFoul:0,
+};
+
+// ── State machine ──
+function adjust(key, delta) {
+  state[key] = Math.max(0, state[key] + delta);
+  document.getElementById(key + '-val').textContent = state[key];
+  updateTotal();
+  if (document.getElementById('tab-data').classList.contains('active')) refreshData();
+}
+
+// ── Tab switching ──
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    if (btn.dataset.tab === 'data') refreshData();
+    closeMatchesPanel();
+  });
+});
+
+// ── Event listeners ──
+['leftLine','twoReturn','yellowCard','redCard'].forEach(id =>
+  document.getElementById(id).addEventListener('change', () => updateTotal())
+);
+document.querySelectorAll('[name=parking]').forEach(r =>
+  r.addEventListener('change', () => updateTotal())
+);
+
+// ── Score computation ──
+function computeRobotPts() {
+  let pts = 0;
+  if (document.getElementById('leftLine').checked) pts += PTS.leave;
+  pts += state.autoClassified * PTS.autoClassified;
+  pts += state.autoOverflow   * PTS.autoOverflow;
+  pts += state.autoPattern    * PTS.autoPattern;
+  pts += state.telClassified  * PTS.telClassified;
+  pts += state.telOverflow    * PTS.telOverflow;
+  pts += state.telDepot       * PTS.telDepot;
+  pts += state.telPattern     * PTS.telPattern;
+  const park = document.querySelector('[name=parking]:checked')?.value;
+  if (park === 'partial') pts += PTS.parkPartial;
+  if (park === 'full')    pts += PTS.parkFull;
+  if (document.getElementById('twoReturn').checked) pts += PTS.twoReturn;
+  const foulPenalty = state.minorFoul * PTS.minorFoul + state.majorFoul * PTS.majorFoul;
+  return { pts, foulPenalty };
+}
+
+function updateTotal() {
+  const { pts } = computeRobotPts();
+  document.getElementById('hdr-pts').textContent = pts;
+}
+
+function appendHint(id, txt) {
+  const el = document.getElementById(id);
+  el.value = el.value ? el.value + ', ' + txt : txt;
+}
+
+// ── Data summary ──
+function refreshData() {
+  const park = document.querySelector('[name=parking]:checked')?.value || 'none';
+  const parkPts = park === 'full' ? PTS.parkFull : park === 'partial' ? PTS.parkPartial : 0;
+  const parkLabel = { none: 'No Return (0)', partial: `Partial (+${PTS.parkPartial})`, full: `Full (+${PTS.parkFull})` }[park];
+  const { pts, foulPenalty } = computeRobotPts();
+  const autoTotal = (document.getElementById('leftLine').checked ? PTS.leave : 0)
+    + state.autoClassified * PTS.autoClassified
+    + state.autoOverflow * PTS.autoOverflow
+    + state.autoPattern * PTS.autoPattern;
+  const telTotal = state.telClassified * PTS.telClassified
+    + state.telOverflow * PTS.telOverflow
+    + state.telDepot * PTS.telDepot
+    + state.telPattern * PTS.telPattern;
+  const endTotal = parkPts + (document.getElementById('twoReturn').checked ? PTS.twoReturn : 0);
+  const leftLine = document.getElementById('leftLine').checked;
+  const twoReturn = document.getElementById('twoReturn').checked;
+
+  const rows = [
+    { key:'Team / Match', val:`${document.getElementById('teamNum').value||'—'} / ${document.getElementById('matchNum').value||'—'}` },
+    { key:'Alliance Position', val:document.getElementById('robotPos').value },
+    { divider:true },
+    { key:`Leave (+${PTS.leave} pts each)`, val:leftLine?'✓ YES':'No', cls:leftLine?'green':'' },
+    { key:`Auto Classified ×${state.autoClassified} (+${PTS.autoClassified} ea)`, val:state.autoClassified*PTS.autoClassified+' pts', cls:'green' },
+    { key:`Auto Overflow ×${state.autoOverflow} (+${PTS.autoOverflow} ea)`, val:state.autoOverflow*PTS.autoOverflow+' pts', cls:'amber' },
+    { key:`Auto Pattern ×${state.autoPattern} (+${PTS.autoPattern} ea)`, val:state.autoPattern*PTS.autoPattern+' pts', cls:'green' },
+    { key:'── AUTO SUBTOTAL', val:autoTotal+' pts', cls:'coral' },
+    { divider:true },
+    { key:`Tel. Classified ×${state.telClassified} (+${PTS.telClassified} ea)`, val:state.telClassified*PTS.telClassified+' pts', cls:'green' },
+    { key:`Tel. Overflow ×${state.telOverflow} (+${PTS.telOverflow} ea)`, val:state.telOverflow*PTS.telOverflow+' pts', cls:'amber' },
+    { key:`Depot ×${state.telDepot} (+${PTS.telDepot} ea)`, val:state.telDepot*PTS.telDepot+' pts', cls:'blue' },
+    { key:`Tel. Pattern ×${state.telPattern} (+${PTS.telPattern} ea)`, val:state.telPattern*PTS.telPattern+' pts', cls:'green' },
+    { key:'── TELEOP SUBTOTAL', val:telTotal+' pts', cls:'coral' },
+    { divider:true },
+    { key:'BASE Return', val:parkLabel, cls:parkPts>0?'coral':'' },
+    { key:'2-Robot Alliance Bonus', val:twoReturn?`+${PTS.twoReturn} pts`:'No', cls:twoReturn?'green':'' },
+    { key:'── ENDGAME SUBTOTAL', val:endTotal+' pts', cls:'coral' },
+    { divider:true },
+    { key:`Minor Fouls ×${state.minorFoul} (to opponent)`, val:state.minorFoul>0?`⚠️ ${state.minorFoul}×${PTS.minorFoul}=${state.minorFoul*PTS.minorFoul}`:'None', cls:state.minorFoul>0?'red':'' },
+    { key:`Major Fouls ×${state.majorFoul} (to opponent)`, val:state.majorFoul>0?`🚨 ${state.majorFoul}×${PTS.majorFoul}=${state.majorFoul*PTS.majorFoul}`:'None', cls:state.majorFoul>0?'red':'' },
+    { key:'Penalty Given to Opponent', val:foulPenalty>0?foulPenalty+' pts given':'None', cls:foulPenalty>0?'red':'' },
+    { divider:true },
+    { key:'ESTIMATED ROBOT TOTAL', val:pts+' pts', cls:'coral' },
+  ];
+
+  document.getElementById('dataSummary').innerHTML = rows.map(r =>
+    r.divider
+      ? '<div class="data-divider"></div>'
+      : `<div class="data-row"><span class="key">${r.key}</span><span class="val ${r.cls||''}">${r.val}</span></div>`
+  ).join('');
+}
+
+// ── Save match ──
+let loadedMatchIndex = -1; // tracks which saved match was loaded into current form
+
+function saveMatch() {
+  const { pts, foulPenalty } = computeRobotPts();
+  const match = {
+    id: Date.now(),
+    team: document.getElementById('teamNum').value||'?',
+    matchNum: document.getElementById('matchNum').value||'?',
+    position: document.getElementById('robotPos').value,
+    startPos: document.querySelector('[name=startPos]:checked')?.value||'—',
+    shootsFrom: document.querySelector('[name=shootFrom]:checked')?.value||'—',
+    leftLine: document.getElementById('leftLine').checked,
+    autoClassified: state.autoClassified, autoOverflow: state.autoOverflow, autoPattern: state.autoPattern,
+    telClassified: state.telClassified, telOverflow: state.telOverflow, telDepot: state.telDepot, telPattern: state.telPattern,
+    parking: document.querySelector('[name=parking]:checked')?.value||'none',
+    twoReturn: document.getElementById('twoReturn').checked,
+    minorFoul: state.minorFoul, majorFoul: state.majorFoul,
+    yellowCard: document.getElementById('yellowCard').checked,
+    redCard: document.getElementById('redCard').checked,
+    autoNotes: document.getElementById('autoNotes').value,
+    telNotes: document.getElementById('telNotes').value,
+    endgameNotes: document.getElementById('endgameNotes').value,
+    foulNotes: document.getElementById('foulNotes').value,
+    alLeave: document.getElementById('al-leave').value,
+    alArtifact: document.getElementById('al-artifact').value,
+    alPattern: document.getElementById('al-pattern').value,
+    alBase: document.getElementById('al-base').value,
+    alFoul: document.getElementById('al-foul').value,
+    alTotal: document.getElementById('al-total').value,
+    estimatedPts: pts,
+    foulPenalty,
+    savedAt: new Date().toLocaleString(),
+  };
+
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  if (loadedMatchIndex >= 0 && loadedMatchIndex < saved.length) {
+    // Overwrite the match that was loaded into current
+    match.id = saved[loadedMatchIndex].id;
+    saved[loadedMatchIndex] = match;
+    showToast('✅ Match updated!');
+  } else {
+    saved.push(match);
+    showToast('✅ Match saved!');
+  }
+  loadedMatchIndex = -1;
+  localStorage.setItem('ftc_matches', JSON.stringify(saved));
+  resetForm();
+  renderSaved();
+  updateMatchCount();
+}
+
+function resetForm() {
+  loadedMatchIndex = -1;
+  ['teamNum','matchNum'].forEach(id => document.getElementById(id).value = '');
+  ['leftLine','twoReturn','yellowCard','redCard'].forEach(id => document.getElementById(id).checked = false);
+  document.getElementById('parkNone').checked = true;
+  ['autoNotes','telNotes','endgameNotes','foulNotes'].forEach(id => document.getElementById(id).value = '');
+  ['al-leave','al-artifact','al-pattern','al-base','al-foul','al-total'].forEach(id => document.getElementById(id).value = '');
+  Object.keys(state).forEach(k => { state[k]=0; document.getElementById(k+'-val').textContent='0'; });
+  document.querySelectorAll('[name=startPos],[name=shootFrom]').forEach(r => r.checked=false);
+  updateTotal();
+}
+
+// ── Render saved matches list ──
+function renderSaved() {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const el = document.getElementById('savedMatchesList');
+  const countEl = document.getElementById('savedCount');
+  countEl.textContent = saved.length ? `(${saved.length})` : '';
+  if (!saved.length) {
+    el.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">No matches saved yet.</p>';
+    return;
+  }
+  el.innerHTML = saved.slice().reverse().map((m,ri) => {
+    const i = saved.length - 1 - ri;
+    const parkLabel = {none:'No Return',partial:'Partial (+5)',full:'Full (+10)'}[m.parking]||'—';
+    const cards = (m.yellowCard?'🟨 ':'')+(m.redCard?'🟥 ':'');
+    return `<div class="saved-match-card">
+      <div class="smc-head">
+        <div class="smc-info">
+          <div class="smc-team">${cards}Team ${m.team} · ${m.matchNum}</div>
+          <div class="smc-match">${m.position} · ${m.savedAt}</div>
+        </div>
+        <div class="smc-pts">${m.estimatedPts}</div>
+      </div>
+      <div class="smc-body">
+        <span>Auto C/O/P: ${m.autoClassified}/${m.autoOverflow}/${m.autoPattern}</span>
+        <span>Tel C/O/D/P: ${m.telClassified}/${m.telOverflow}/${m.telDepot}/${m.telPattern}</span>
+        <span>Park: ${parkLabel}</span>
+        <span>2-Robot: ${m.twoReturn?'✓ Yes':'No'}</span>
+        <span>Fouls (minor/major): ${m.minorFoul}/${m.majorFoul}</span>
+        <span>Opp. Penalty: ${m.foulPenalty} pts</span>
+        ${m.alTotal?`<span>Alliance Total: ${m.alTotal}</span>`:''}
+        ${m.endgameNotes?`<span class="smc-note">📝 ${m.endgameNotes}</span>`:''}
+      </div>
+      <div class="smc-footer">
+        <button class="smc-btn primary" onclick="viewMatchDetail(${i})">🔍 View</button>
+        <button class="smc-btn" onclick="loadMatch(${i})" style="border-color:var(--amber);color:var(--amber);">📋 Load to Current</button>
+        <button class="smc-btn" onclick="editMatch(${i})">✏️ Edit</button>
+        <button class="smc-btn" onclick="exportMatchByIndex(${i})">📤 Export PNG</button>
+        <button class="smc-btn danger" onclick="deleteMatch(${i})">🗑 Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Matches dropdown ──
+function renderMatchesDropdown() {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const el = document.getElementById('matchesDropList');
+  if (!saved.length) {
+    el.innerHTML = '<div class="matches-empty">No saved matches yet.<br>Complete and save a match to see it here.</div>';
+    return;
+  }
+  el.innerHTML = saved.slice().reverse().map((m,ri) => {
+    const i = saved.length - 1 - ri;
+    const cards = (m.yellowCard?'🟨':'')+(m.redCard?'🟥':'');
+    return `<div class="match-drop-item">
+      <div class="match-drop-info">
+        <div class="match-drop-team">${cards} Team ${m.team} · Match ${m.matchNum}</div>
+        <div class="match-drop-meta">${m.position} · ${m.savedAt}</div>
+      </div>
+      <div class="match-drop-pts">${m.estimatedPts}<span style="font-size:9px;color:var(--text-dim);font-family:var(--body)"> pts</span></div>
+      <div class="match-drop-actions">
+        <button class="drop-act-btn" onclick="loadMatch(${i});toggleMatchesPanel()" style="border-color:var(--amber);color:var(--amber);">Load</button>
+        <button class="drop-act-btn" onclick="viewMatchDetail(${i});toggleMatchesPanel()">View</button>
+        <button class="drop-act-btn del" onclick="deleteMatch(${i})">Del</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateMatchCount() {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  document.getElementById('matchCount').textContent = saved.length;
+}
+
+let matchesPanelOpen = false;
+function toggleMatchesPanel() {
+  matchesPanelOpen = !matchesPanelOpen;
+  const panel = document.getElementById('matchesPanel');
+  const btn = document.getElementById('matchesDropBtn');
+  if (matchesPanelOpen) {
+    renderMatchesDropdown();
+    panel.classList.add('open');
+    btn.classList.add('open');
+  } else {
+    panel.classList.remove('open');
+    btn.classList.remove('open');
+  }
+}
+
+function closeMatchesPanel() {
+  matchesPanelOpen = false;
+  document.getElementById('matchesPanel').classList.remove('open');
+  document.getElementById('matchesDropBtn').classList.remove('open');
+}
+
+document.addEventListener('click', e => {
+  if (matchesPanelOpen && !e.target.closest('#matchesPanel') && !e.target.closest('#matchesDropBtn')) {
+    closeMatchesPanel();
+  }
+});
+
+// ── Match detail modal ──
+function viewMatchDetail(index) {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const m = saved[index];
+  if (!m) return;
+  const parkLabel = {none:'No Return (0 pts)',partial:'Partial Return (+5 pts)',full:'Full Return (+10 pts)'}[m.parking]||'—';
+  const cards = (m.yellowCard?'🟨 Yellow Card  ':'')+(m.redCard?'🟥 Red Card  ':'') || 'None';
+  const autoTotal = (m.leftLine?PTS.leave:0) + m.autoClassified*PTS.autoClassified + m.autoOverflow*PTS.autoOverflow + m.autoPattern*PTS.autoPattern;
+  const telTotal = m.telClassified*PTS.telClassified + m.telOverflow*PTS.telOverflow + m.telDepot*PTS.telDepot + m.telPattern*PTS.telPattern;
+  const parkPts = m.parking==='full'?PTS.parkFull:m.parking==='partial'?PTS.parkPartial:0;
+  const endTotal = parkPts + (m.twoReturn?PTS.twoReturn:0);
+
+  document.getElementById('modalTitle').textContent = `Team ${m.team} · Match ${m.matchNum}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="card accent-coral">
+      <div class="card-head">Match Summary</div>
+      <div class="card-body" style="gap:4px;">
+        ${dataRowHTML('Alliance', m.position)}
+        ${dataRowHTML('Start Position', m.startPos)}
+        ${dataRowHTML('Shoots From', m.shootsFrom)}
+        ${dataRowHTML('Saved At', m.savedAt)}
+      </div>
+    </div>
+    <div class="card accent-green">
+      <div class="card-head">Autonomous — ${autoTotal} pts</div>
+      <div class="card-body" style="gap:4px;">
+        ${dataRowHTML('Leave (+3)', m.leftLine?'✓ Yes':'No', m.leftLine?'green':'')}
+        ${dataRowHTML(`Classified ×${m.autoClassified}`, m.autoClassified*PTS.autoClassified+' pts', 'green')}
+        ${dataRowHTML(`Overflow ×${m.autoOverflow}`, m.autoOverflow*PTS.autoOverflow+' pts', 'amber')}
+        ${dataRowHTML(`Pattern ×${m.autoPattern}`, m.autoPattern*PTS.autoPattern+' pts', 'green')}
+        ${m.autoNotes?`<div class="info-box" style="margin-top:4px;font-size:12px;color:var(--text);">${m.autoNotes}</div>`:''}
+      </div>
+    </div>
+    <div class="card accent-blue">
+      <div class="card-head">TeleOp — ${telTotal} pts</div>
+      <div class="card-body" style="gap:4px;">
+        ${dataRowHTML(`Classified ×${m.telClassified}`, m.telClassified*PTS.telClassified+' pts', 'green')}
+        ${dataRowHTML(`Overflow ×${m.telOverflow}`, m.telOverflow*PTS.telOverflow+' pts', 'amber')}
+        ${dataRowHTML(`Depot ×${m.telDepot}`, m.telDepot*PTS.telDepot+' pts', 'blue')}
+        ${dataRowHTML(`Pattern ×${m.telPattern}`, m.telPattern*PTS.telPattern+' pts', 'green')}
+        ${m.telNotes?`<div class="info-box" style="margin-top:4px;font-size:12px;color:var(--text);">${m.telNotes}</div>`:''}
+      </div>
+    </div>
+    <div class="card accent-coral">
+      <div class="card-head">Endgame — ${endTotal} pts</div>
+      <div class="card-body" style="gap:4px;">
+        ${dataRowHTML('BASE Return', parkLabel, parkPts>0?'coral':'')}
+        ${dataRowHTML('2-Robot Bonus', m.twoReturn?'+10 pts':'No', m.twoReturn?'green':'')}
+        ${m.endgameNotes?`<div class="info-box" style="margin-top:4px;font-size:12px;color:var(--text);">${m.endgameNotes}</div>`:''}
+      </div>
+    </div>
+    <div class="card accent-red">
+      <div class="card-head">Fouls & Cards</div>
+      <div class="card-body" style="gap:4px;">
+        ${dataRowHTML(`Minor Fouls ×${m.minorFoul}`, `${m.minorFoul*PTS.minorFoul} pts to opp`, m.minorFoul?'red':'')}
+        ${dataRowHTML(`Major Fouls ×${m.majorFoul}`, `${m.majorFoul*PTS.majorFoul} pts to opp`, m.majorFoul?'red':'')}
+        ${dataRowHTML('Cards', cards)}
+        ${m.foulNotes?`<div class="info-box" style="margin-top:4px;font-size:12px;color:var(--text);">${m.foulNotes}</div>`:''}
+      </div>
+    </div>
+    ${m.alTotal?`<div class="card accent-blue">
+      <div class="card-head">Alliance Score (Official)</div>
+      <div class="card-body" style="gap:4px;">
+        ${dataRowHTML('Leave', m.alLeave||'—')}
+        ${dataRowHTML('Artifact', m.alArtifact||'—')}
+        ${dataRowHTML('Pattern', m.alPattern||'—')}
+        ${dataRowHTML('Base', m.alBase||'—')}
+        ${dataRowHTML('Foul', m.alFoul||'—')}
+        ${dataRowHTML('TOTAL', m.alTotal+' pts', 'coral')}
+      </div>
+    </div>`:''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="save-btn ghost-btn" style="font-size:13px;padding:11px;border-color:var(--amber);color:var(--amber);" onclick="loadMatch(${index});closeModalDirect()">📋 Load to Current</button>
+      <button class="save-btn ghost-btn" style="font-size:13px;padding:11px;" onclick="exportMatchByIndex(${index})">📤 Export PNG</button>
+      <button class="save-btn ghost-btn" style="font-size:13px;padding:11px;border-color:var(--red);color:var(--red);" onclick="deleteMatch(${index});closeModalDirect()">🗑 Delete</button>
+    </div>
+  `;
+  document.getElementById('matchModal').classList.add('open');
+}
+
+function dataRowHTML(key, val, cls='') {
+  return `<div class="data-row"><span class="key">${key}</span><span class="val ${cls}">${val}</span></div>`;
+}
+
+function closeModal(e) {
+  if (e.target === document.getElementById('matchModal')) closeModalDirect();
+}
+function closeModalDirect() {
+  document.getElementById('matchModal').classList.remove('open');
+}
+
+// ── Delete match ──
+function deleteMatch(index) {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  saved.splice(index, 1);
+  localStorage.setItem('ftc_matches', JSON.stringify(saved));
+  renderSaved();
+  renderMatchesDropdown();
+  updateMatchCount();
+  showToast('🗑 Match deleted');
+}
+
+// ── Clear all ──
+function clearAll() {
+  if (confirm('Clear ALL saved match data? This cannot be undone.')) {
+    localStorage.removeItem('ftc_matches');
+    renderSaved();
+    renderMatchesDropdown();
+    updateMatchCount();
+    showToast('🗑 All data cleared');
+  }
+}
+
+// ══════════════════════════════════
+//  EXPORT FUNCTIONS
+// ══════════════════════════════════
+
+function buildExportCard(matchData) {
+  // Build a clean white card for export
+  const park = matchData ? matchData.parking : (document.querySelector('[name=parking]:checked')?.value||'none');
+  const parkPts = park==='full'?PTS.parkFull:park==='partial'?PTS.parkPartial:0;
+  const parkLabel = {none:'No Return (0)',partial:'Partial (+5)',full:'Full (+10)'}[park];
+
+  let team, matchNum, pos, leftLine, ac, ao, ap, tc, to, td, tp, tr, mf, MF, pts, fp, alTotal, savedAt;
+  if (matchData) {
+    team=matchData.team; matchNum=matchData.matchNum; pos=matchData.position;
+    leftLine=matchData.leftLine; ac=matchData.autoClassified; ao=matchData.autoOverflow; ap=matchData.autoPattern;
+    tc=matchData.telClassified; to=matchData.telOverflow; td=matchData.telDepot; tp=matchData.telPattern;
+    tr=matchData.twoReturn; mf=matchData.minorFoul; MF=matchData.majorFoul;
+    pts=matchData.estimatedPts; fp=matchData.foulPenalty; alTotal=matchData.alTotal||''; savedAt=matchData.savedAt||'';
+  } else {
+    team=document.getElementById('teamNum').value||'?'; matchNum=document.getElementById('matchNum').value||'?';
+    pos=document.getElementById('robotPos').value;
+    leftLine=document.getElementById('leftLine').checked;
+    ac=state.autoClassified; ao=state.autoOverflow; ap=state.autoPattern;
+    tc=state.telClassified; to=state.telOverflow; td=state.telDepot; tp=state.telPattern;
+    tr=document.getElementById('twoReturn').checked;
+    mf=state.minorFoul; MF=state.majorFoul;
+    const r = computeRobotPts(); pts=r.pts; fp=r.foulPenalty;
+    alTotal=document.getElementById('al-total').value||'';
+    savedAt=new Date().toLocaleString();
+  }
+
+  const autoTotal = (leftLine?PTS.leave:0)+ac*PTS.autoClassified+ao*PTS.autoOverflow+ap*PTS.autoPattern;
+  const telTotal = tc*PTS.telClassified+to*PTS.telOverflow+td*PTS.telDepot+tp*PTS.telPattern;
+  const endTotal = parkPts+(tr?PTS.twoReturn:0);
+
+  const row = (k,v,cls='') => `<div class="ec-row"><span class="ec-key">${k}</span><span class="ec-val ${cls}">${v}</span></div>`;
+  const div = () => `<div class="ec-divider"></div>`;
+  const sec = t => `<div class="ec-section">${t}</div>`;
+
+  document.getElementById('exportCard').innerHTML = `
+    <div class="ec-header">
+      <div class="ec-title">FTC DECODE Scout — Team ${team}</div>
+      <div class="ec-sub">Match ${matchNum} · ${pos} · ${savedAt || new Date().toLocaleString()}</div>
+    </div>
+    ${sec('AUTONOMOUS')}
+    ${row('Leave Starting Line (+3)', leftLine?'✓ YES':'No', leftLine?'green':'')}
+    ${row(`Classified ×${ac}`, ac*PTS.autoClassified+' pts', 'green')}
+    ${row(`Overflow ×${ao}`, ao*PTS.autoOverflow+' pts', 'amber')}
+    ${row(`Pattern ×${ap}`, ap*PTS.autoPattern+' pts', 'green')}
+    ${row('AUTO SUBTOTAL', autoTotal+' pts', 'coral')}
+    ${div()}
+    ${sec('TELEOP')}
+    ${row(`Classified ×${tc}`, tc*PTS.telClassified+' pts', 'green')}
+    ${row(`Overflow ×${to}`, to*PTS.telOverflow+' pts', 'amber')}
+    ${row(`Depot ×${td}`, td*PTS.telDepot+' pts', 'blue')}
+    ${row(`Pattern ×${tp}`, tp*PTS.telPattern+' pts', 'green')}
+    ${row('TELEOP SUBTOTAL', telTotal+' pts', 'coral')}
+    ${div()}
+    ${sec('ENDGAME')}
+    ${row('BASE Return', parkLabel, parkPts>0?'coral':'')}
+    ${row('2-Robot Alliance Bonus', tr?'+10 pts':'No', tr?'green':'')}
+    ${row('ENDGAME SUBTOTAL', endTotal+' pts', 'coral')}
+    ${div()}
+    ${sec('FOULS (given to opponent)')}
+    ${row(`Minor Fouls ×${mf}`, mf?mf*PTS.minorFoul+' pts':'None', mf?'red':'')}
+    ${row(`Major Fouls ×${MF}`, MF?MF*PTS.majorFoul+' pts':'None', MF?'red':'')}
+    ${div()}
+    ${sec('RESULT')}
+    ${row('ESTIMATED ROBOT TOTAL', pts+' pts', 'coral')}
+    ${alTotal?row('Official Alliance Total', alTotal+' pts', 'blue'):''}
+    <div class="ec-footer">FTC DECODE 2025–26 · Team 10696 Syosset Syborgs · Decode Scout App</div>
+  `;
+}
+
+// ── Universal download helper (works in local-file Chrome/Chromebook) ──
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function downloadText(content, filename, mimeType) {
+  downloadBlob(new Blob([content], { type: mimeType }), filename);
+}
+
+async function captureExportCard(format, filename) {
+  if (typeof html2canvas === 'undefined') {
+    showToast('⚠️ Screenshot mode — use PDF instead');
+    window.print();
+    return;
+  }
+  const card = document.getElementById('exportCard');
+  card.style.top = '-9999px';
+  card.style.left = '0';
+  card.style.display = 'block';
+  try {
+    const canvas = await html2canvas(card, {
+      backgroundColor: '#ffffff',
+      scale: 2,
+      useCORS: true,
+      logging: false,
+    });
+    const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+    const quality = format === 'jpg' ? 0.95 : undefined;
+    canvas.toBlob(blob => {
+      if (!blob) { showToast('⚠️ Export failed — try PDF'); return; }
+      downloadBlob(blob, filename + (format === 'jpg' ? '.jpg' : '.png'));
+      showToast('✅ Image ready — check Downloads!');
+    }, mimeType, quality);
+  } catch(e) {
+    showToast('⚠️ Export failed — try PDF');
+    console.error(e);
+  }
+  card.style.top = '-9999px';
+}
+
+function exportPNG() {
+  buildExportCard(null);
+  const team = document.getElementById('teamNum').value||'team';
+  const match = document.getElementById('matchNum').value||'match';
+  captureExportCard('png', `FTC_Scout_${team}_${match}`);
+}
+
+function exportJPG() {
+  buildExportCard(null);
+  const team = document.getElementById('teamNum').value||'team';
+  const match = document.getElementById('matchNum').value||'match';
+  captureExportCard('jpg', `FTC_Scout_${team}_${match}`);
+}
+
+function exportPDF() {
+  refreshData();
+  window.print();
+}
+
+function exportMatchJSON() {
+  const { pts, foulPenalty } = computeRobotPts();
+  const match = {
+    team: document.getElementById('teamNum').value||'?',
+    matchNum: document.getElementById('matchNum').value||'?',
+    position: document.getElementById('robotPos').value,
+    leftLine: document.getElementById('leftLine').checked,
+    autoClassified:state.autoClassified, autoOverflow:state.autoOverflow, autoPattern:state.autoPattern,
+    telClassified:state.telClassified, telOverflow:state.telOverflow, telDepot:state.telDepot, telPattern:state.telPattern,
+    parking: document.querySelector('[name=parking]:checked')?.value||'none',
+    twoReturn: document.getElementById('twoReturn').checked,
+    minorFoul:state.minorFoul, majorFoul:state.majorFoul,
+    estimatedPts:pts, foulPenalty,
+    exportedAt: new Date().toISOString(),
+  };
+  downloadText(JSON.stringify(match, null, 2), `FTC_Scout_${match.team}_${match.matchNum}.json`, 'application/json;charset=utf-8');
+  showToast('✅ JSON ready — check Downloads!');
+}
+
+function exportMatchByIndex(index) {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const m = saved[index];
+  if (!m) return;
+  buildExportCard(m);
+  captureExportCard('png', `FTC_Scout_Team${m.team}_Match${m.matchNum}`);
+}
+
+// ── Export current match as CSV ──
+function exportCurrentMatchCSV() {
+  const { pts, foulPenalty } = computeRobotPts();
+  const m = {
+    team: document.getElementById('teamNum').value||'?',
+    matchNum: document.getElementById('matchNum').value||'?',
+    position: document.getElementById('robotPos').value,
+    startPos: document.querySelector('[name=startPos]:checked')?.value||'—',
+    shootsFrom: document.querySelector('[name=shootFrom]:checked')?.value||'—',
+    leftLine: document.getElementById('leftLine').checked,
+    autoClassified: state.autoClassified, autoOverflow: state.autoOverflow, autoPattern: state.autoPattern,
+    telClassified: state.telClassified, telOverflow: state.telOverflow, telDepot: state.telDepot, telPattern: state.telPattern,
+    parking: document.querySelector('[name=parking]:checked')?.value||'none',
+    twoReturn: document.getElementById('twoReturn').checked,
+    minorFoul: state.minorFoul, majorFoul: state.majorFoul,
+    yellowCard: document.getElementById('yellowCard').checked,
+    redCard: document.getElementById('redCard').checked,
+    estimatedPts: pts, foulPenalty,
+    alTotal: document.getElementById('al-total').value||'',
+    autoNotes: document.getElementById('autoNotes').value,
+    telNotes: document.getElementById('telNotes').value,
+    endgameNotes: document.getElementById('endgameNotes').value,
+    foulNotes: document.getElementById('foulNotes').value,
+    savedAt: new Date().toLocaleString(),
+  };
+  const cols = ['team','matchNum','position','startPos','shootsFrom','leftLine','autoClassified','autoOverflow','autoPattern','telClassified','telOverflow','telDepot','telPattern','parking','twoReturn','minorFoul','majorFoul','yellowCard','redCard','estimatedPts','foulPenalty','alTotal','autoNotes','telNotes','endgameNotes','foulNotes','savedAt'];
+  const csv = [cols.join(','), cols.map(c => JSON.stringify(m[c]??'')).join(',')].join('\n');
+  downloadText(csv, `FTC_Scout_${m.team}_${m.matchNum}.csv`, 'text/csv;charset=utf-8');
+  showToast('✅ CSV ready — check Downloads!');
+}
+
+// ── Load saved match into current form ──
+function loadMatch(index) {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const m = saved[index];
+  if (!m) return;
+
+  // Setup fields
+  document.getElementById('teamNum').value = (m.team !== '?') ? m.team : '';
+  document.getElementById('matchNum').value = (m.matchNum !== '?') ? m.matchNum : '';
+  document.getElementById('robotPos').value = m.position || 'Red 1';
+
+  // Toggles
+  document.getElementById('leftLine').checked = !!m.leftLine;
+  document.getElementById('twoReturn').checked = !!m.twoReturn;
+  document.getElementById('yellowCard').checked = !!m.yellowCard;
+  document.getElementById('redCard').checked = !!m.redCard;
+
+  // Counters
+  const counterKeys = ['autoClassified','autoOverflow','autoPattern','telClassified','telOverflow','telDepot','telPattern','minorFoul','majorFoul'];
+  counterKeys.forEach(k => {
+    state[k] = m[k] || 0;
+    const el = document.getElementById(k + '-val');
+    if (el) el.textContent = state[k];
+  });
+
+  // Parking
+  const parkVal = m.parking || 'none';
+  document.querySelectorAll('[name=parking]').forEach(r => { r.checked = (r.value === parkVal); });
+
+  // Start pos / shoots from
+  document.querySelectorAll('[name=startPos]').forEach(r => { r.checked = (r.value === m.startPos); });
+  document.querySelectorAll('[name=shootFrom]').forEach(r => { r.checked = (r.value === m.shootsFrom); });
+
+  // Notes
+  document.getElementById('autoNotes').value = m.autoNotes || '';
+  document.getElementById('telNotes').value = m.telNotes || '';
+  document.getElementById('endgameNotes').value = m.endgameNotes || '';
+  document.getElementById('foulNotes').value = m.foulNotes || '';
+
+  // Alliance fields
+  document.getElementById('al-leave').value = m.alLeave || '';
+  document.getElementById('al-artifact').value = m.alArtifact || '';
+  document.getElementById('al-pattern').value = m.alPattern || '';
+  document.getElementById('al-base').value = m.alBase || '';
+  document.getElementById('al-foul').value = m.alFoul || '';
+  document.getElementById('al-total').value = m.alTotal || '';
+
+  updateTotal();
+
+  // Switch to Auto tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('[data-tab="auto"]').classList.add('active');
+  document.getElementById('tab-auto').classList.add('active');
+
+  closeMatchesPanel();
+  loadedMatchIndex = index;
+  showToast('📋 Loaded into current match!');
+}
+
+// ── Edit saved match ──
+let editingIndex = -1;
+const editState = { autoClassified:0, autoOverflow:0, autoPattern:0, telClassified:0, telOverflow:0, telDepot:0, telPattern:0, minorFoul:0, majorFoul:0 };
+
+function editMatch(index) {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const m = saved[index];
+  if (!m) return;
+  editingIndex = index;
+  Object.keys(editState).forEach(k => editState[k] = m[k]||0);
+
+  document.getElementById('editModalTitle').textContent = `Edit · Team ${m.team} · Match ${m.matchNum}`;
+
+  const makeCounter = (key, label, colorClass) => `
+    <div class="counter-row" style="border-top:1px solid var(--border);">
+      <div class="counter-label">${label}</div>
+      <div class="cnt-strip ${colorClass}-strip">
+        <button class="cnt-btn" onclick="editAdjust('${key}',-1)">−</button>
+        <div class="cnt-val ${colorClass}" id="edit-${key}-val">${editState[key]}</div>
+        <button class="cnt-btn plus" onclick="editAdjust('${key}',1)">+</button>
+      </div>
+    </div>`;
+
+  const parkOptions = ['none','partial','full'].map(v => {
+    const labels = {none:'No Return (0)',partial:'Partial (+5)',full:'Full (+10)'};
+    return `<option value="${v}"${m.parking===v?' selected':''}>${labels[v]}</option>`;
+  }).join('');
+
+  document.getElementById('editModalBody').innerHTML = `
+    <div class="card" style="padding:0;">
+      <div class="card-head">Setup</div>
+      <div class="card-body" style="gap:8px;">
+        <div class="field-wrap"><label>Team #</label><input type="text" id="edit-teamNum" value="${m.team}" style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:var(--body);font-size:13px;padding:7px 9px;outline:none;"></div>
+        <div class="field-wrap"><label>Match #</label><input type="text" id="edit-matchNum" value="${m.matchNum}" style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:var(--body);font-size:13px;padding:7px 9px;outline:none;"></div>
+        <div class="field-wrap"><label>Alliance</label><select id="edit-robotPos" style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:var(--body);font-size:13px;padding:7px 9px;outline:none;">
+          ${['Red 1','Red 2','Blue 1','Blue 2'].map(p=>`<option${m.position===p?' selected':''}>${p}</option>`).join('')}
+        </select></div>
+      </div>
+    </div>
+    <div class="card accent-green" style="padding:0;">
+      <div class="card-head">Autonomous</div>
+      <div class="toggle-row" style="padding:10px 13px;">
+        <label>Left Starting Line (+3)</label>
+        <input type="checkbox" class="toggle" id="edit-leftLine"${m.leftLine?' checked':''}>
+      </div>
+      ${makeCounter('autoClassified','Classified <span class="pts green">+3 ea</span>','green')}
+      ${makeCounter('autoOverflow','Overflow <span class="pts amber">+1 ea</span>','amber')}
+      ${makeCounter('autoPattern','Pattern <span class="pts green">+2 ea</span>','green')}
+    </div>
+    <div class="card accent-blue" style="padding:0;">
+      <div class="card-head">TeleOp</div>
+      ${makeCounter('telClassified','Classified <span class="pts green">+3 ea</span>','green')}
+      ${makeCounter('telOverflow','Overflow <span class="pts amber">+1 ea</span>','amber')}
+      ${makeCounter('telDepot','Depot <span class="pts blue">+1 ea</span>','blue')}
+      ${makeCounter('telPattern','Pattern <span class="pts green">+2 ea</span>','green')}
+    </div>
+    <div class="card accent-coral">
+      <div class="card-head">Endgame</div>
+      <div class="card-body" style="gap:8px;">
+        <div class="field-wrap"><label>Parking</label><select id="edit-parking" style="width:100%;background:var(--surface3);border:1px solid var(--border2);border-radius:7px;color:var(--text);font-family:var(--body);font-size:13px;padding:7px 9px;outline:none;">${parkOptions}</select></div>
+        <div class="toggle-row" style="padding:0;">
+          <label>2-Robot Alliance Bonus (+10)</label>
+          <input type="checkbox" class="toggle" id="edit-twoReturn"${m.twoReturn?' checked':''}>
+        </div>
+      </div>
+    </div>
+    <div class="card accent-red" style="padding:0;">
+      <div class="card-head">Fouls</div>
+      ${makeCounter('minorFoul','Minor Fouls <span class="pts red">+5 opp ea</span>','red')}
+      ${makeCounter('majorFoul','Major Fouls <span class="pts red">+15 opp ea</span>','red')}
+    </div>
+    <div class="card">
+      <div class="card-head">Notes</div>
+      <div class="card-body" style="gap:8px;">
+        <div class="field-wrap"><label>Auto Notes</label><textarea id="edit-autoNotes" style="min-height:60px;">${m.autoNotes||''}</textarea></div>
+        <div class="field-wrap"><label>TeleOp Notes</label><textarea id="edit-telNotes" style="min-height:60px;">${m.telNotes||''}</textarea></div>
+        <div class="field-wrap"><label>Endgame Notes</label><textarea id="edit-endgameNotes" style="min-height:60px;">${m.endgameNotes||''}</textarea></div>
+        <div class="field-wrap"><label>Foul Notes</label><textarea id="edit-foulNotes" style="min-height:60px;">${m.foulNotes||''}</textarea></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="save-btn" style="font-size:13px;padding:12px;" onclick="saveEditedMatch()">💾 Save Changes</button>
+      <button class="save-btn ghost-btn" style="font-size:13px;padding:12px;" onclick="closeEditModalDirect()">Cancel</button>
+    </div>
+  `;
+  document.getElementById('editModal').classList.add('open');
+}
+
+function editAdjust(key, delta) {
+  editState[key] = Math.max(0, editState[key] + delta);
+  document.getElementById('edit-' + key + '-val').textContent = editState[key];
+}
+
+function saveEditedMatch() {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  const m = saved[editingIndex];
+  if (!m) return;
+
+  Object.keys(editState).forEach(k => m[k] = editState[k]);
+  m.team = document.getElementById('edit-teamNum').value || m.team;
+  m.matchNum = document.getElementById('edit-matchNum').value || m.matchNum;
+  m.position = document.getElementById('edit-robotPos').value;
+  m.leftLine = document.getElementById('edit-leftLine').checked;
+  m.twoReturn = document.getElementById('edit-twoReturn').checked;
+  m.parking = document.getElementById('edit-parking').value;
+  m.autoNotes = document.getElementById('edit-autoNotes').value;
+  m.telNotes = document.getElementById('edit-telNotes').value;
+  m.endgameNotes = document.getElementById('edit-endgameNotes').value;
+  m.foulNotes = document.getElementById('edit-foulNotes').value;
+
+  // Recalculate estimated pts
+  let pts = 0;
+  if (m.leftLine) pts += PTS.leave;
+  pts += m.autoClassified*PTS.autoClassified + m.autoOverflow*PTS.autoOverflow + m.autoPattern*PTS.autoPattern;
+  pts += m.telClassified*PTS.telClassified + m.telOverflow*PTS.telOverflow + m.telDepot*PTS.telDepot + m.telPattern*PTS.telPattern;
+  if (m.parking==='partial') pts += PTS.parkPartial;
+  if (m.parking==='full') pts += PTS.parkFull;
+  if (m.twoReturn) pts += PTS.twoReturn;
+  m.estimatedPts = pts;
+  m.foulPenalty = m.minorFoul*PTS.minorFoul + m.majorFoul*PTS.majorFoul;
+
+  saved[editingIndex] = m;
+  localStorage.setItem('ftc_matches', JSON.stringify(saved));
+  closeEditModalDirect();
+  renderSaved();
+  renderMatchesDropdown();
+  showToast('✅ Match updated!');
+}
+
+function closeEditModal(e) {
+  if (e.target === document.getElementById('editModal')) closeEditModalDirect();
+}
+function closeEditModalDirect() {
+  document.getElementById('editModal').classList.remove('open');
+  editingIndex = -1;
+}
+
+function exportCSV() {
+  const saved = JSON.parse(localStorage.getItem('ftc_matches')||'[]');
+  if (!saved.length) { showToast('No data to export'); return; }
+  const cols = ['team','matchNum','position','startPos','shootsFrom','leftLine','autoClassified','autoOverflow','autoPattern','telClassified','telOverflow','telDepot','telPattern','parking','twoReturn','minorFoul','majorFoul','yellowCard','redCard','estimatedPts','foulPenalty','alTotal','autoNotes','telNotes','endgameNotes','foulNotes','savedAt'];
+  const csv = [cols.join(','), ...saved.map(m => cols.map(c => JSON.stringify(m[c]??'')).join(','))].join('\n');
+  downloadText(csv, 'FTC_Scouting_DECODE_2025.csv', 'text/csv;charset=utf-8');
+  showToast('✅ CSV ready — check Downloads!');
+}
+
+// ── Toast ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── Init ──
+updateTotal();
+refreshData();
+renderSaved();
+updateMatchCount();
+</script>
+</body>
+</html>
